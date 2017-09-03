@@ -1,0 +1,5 @@
+to enter 64-bit long mode
+    - create a stack
+    - check if long mode is even available
+    - set up page tables
+    - set up gdt
