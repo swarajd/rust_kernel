@@ -6,7 +6,8 @@ SECTIONS {
     .boot :
     {
         /* ensure that the multiboot header is at the beginning */
-        *(.multiboot_header)
+        /* not used anywhere, and is trashed due to --gc-sections, but we explicitly keep */
+        KEEP(*(.multiboot_header))
     }
 
     .text :
