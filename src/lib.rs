@@ -1,29 +1,35 @@
 
 // used to allow the specified feature-gated attributes in this crate. (only in nightly)
 #![feature(lang_items)]
+#![feature(unique)]
+#![feature(const_fn)]
 
 // we don't want std because std relies on OS stuff
 #![no_std]
 
 // add the libc functions
+#[allow(unused_extern_crates)]
 extern crate rlibc;
+
+
+// add the volatile to make sure compilers don't optimize out writes
+extern crate volatile;
+
+// add the spin lock for the writer
+extern crate spin;
+
+#[macro_use]
+mod vga_buffer;
 
 // without ! applies to following item
 #[no_mangle]
+#[allow(unused_must_use)]
 pub extern fn rust_main() {
     // ATTENTION: we have a very small stack and no guard page
 
-    let hello = b"Hello World!";
-    let color_byte = 0x1f; //white foreground, blue background
-
-    let mut hello_colored = [color_byte; 24];
-    for (i, char_byte) in hello.into_iter().enumerate() {
-        hello_colored[i*2] = *char_byte;
-    }
-
-    let buffer_ptr = (0xb8000 + 1988) as *mut _;
-    unsafe { *buffer_ptr = hello_colored };
-
+    vga_buffer::clear_screen();
+    println!("Hello World{}", "!");
+    println!("{}", { println!("inner"); "outer" });
     loop {}
 }
 
